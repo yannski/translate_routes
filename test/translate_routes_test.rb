@@ -2,7 +2,7 @@ require 'test/unit'
 require 'rubygems'
 require 'mocha'
 
-%w(actionpack activesupport actionmailer).each{ |gem_lib| gem gem_lib, '3.0.1' }
+%w(actionpack activesupport actionmailer).each{ |gem_lib| gem gem_lib, '3.1.0.rc1' }
 %w(active_support action_pack action_mailer action_controller action_dispatch).each{ |lib| require lib }
 
 plugin_root = File.join(File.dirname(__FILE__), '..')
@@ -151,10 +151,10 @@ class TranslateRoutesTest < ActionController::TestCase
   def test_formatted_root_route
     @routes.draw{ root :to => 'people#index', :as => 'root' }
     @route_translator.yield_dictionary { |t| t['en'] = {}; t['es'] = {'people' => 'gente'} }
-    assert_equal '/(.:format)', path_string(named_route('root'))
+    assert_equal '/', path_string(named_route('root'))
     translate_routes
-    assert_equal '/(.:format)', path_string(named_route('root_en'))
-    assert_equal '/es(.:format)', path_string(named_route('root_es'))
+    assert_equal '/', path_string(named_route('root_en'))
+    assert_equal '/es', path_string(named_route('root_es'))
   end
   
   def test_routes_translations_are_always_downcased
@@ -238,9 +238,11 @@ class TranslateRoutesTest < ActionController::TestCase
 
   # Given a route defined as a string like this:
   # 'ANY    /es(.:format)                            {:controller=>"people", :action=>"index"}'
+  # or
+  # '    /es(.:format)                            {:controller=>"people", :action=>"index"}'
   # returns "/es(.:format)"
   def path_string(route)
-    route.to_s.split(' ')[1]
+    "x#{route}".to_s.split(' ')[1]
   end
 
   def named_route(name)
