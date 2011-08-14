@@ -1,4 +1,3 @@
-
 # This class knows nothing
 # about Rails.root or Rails.application.routes, and therefor is easier to
 # test without an Rails App.
@@ -150,6 +149,8 @@ class RouteTranslator
 
       # save original routes and clear route set
       original_routes = route_set.routes.dup                     # Array [routeA, routeB, ...]
+
+      original_routes.delete_if{|r| r.path == '/assets'}
 
       original_named_routes = route_set.named_routes.routes.dup  # Hash {:name => :route}
 
